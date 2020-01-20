@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <title>schule-intern csrf</title>
+  <meta charset="UTF-8">
+  <style>
+    input {
+      position: fixed;
+    }
+
+    textarea {
+      position: fixed;
+      resize: vertical;
+      height: 300px;
+      width: 490px;
+      min-height: 100px;
+      margin-top: 30px;
+    }
+
+    #teacherIDs {
+      height: 100px;
+      width: 200px;
+      margin-left: 500px;
+    }
+
+    button {
+      position: fixed;
+      margin-top: 30px;
+    }
+
+    #send {
+      margin-left: 710px;
+    }
+
+    #reset {
+      margin-left: 760px;
+
+    }
+  </style>
+</head>
+
+<body>
+
+
+  <input type="text" id="subject" placeholder="Betreff">
+  <textarea id="msg" placeholder="Die Nachricht..."></textarea>
+  <textarea id="teacherIDs" placeholder="Die Lehrer-ID(s) (T:xxxxxxxxxx; T...)"></textarea>
+
+  <button type="button" id="send" onclick="send()">send</button>
+  <button type="button" id="reset" onclick="reset()">reset</button>
+
+  <script>
+
+    function reset() {
+      document.getElementById("subject").value = "";
+      document.getElementById("msg").value = "";
+      document.getElementById("teacherIDs").value = "";
+    }
+
+    function send() {
+      var subject = document.getElementById("subject").value;
+      var recipient = document.getElementById("teacherIDs").value;
+      var text = document.getElementById("msg").value;
+
+      if (subject != "" && recipient != "" && text != "") {
+        const formData = new FormData();
+        formData.append("recipients", recipient);
+        formData.append("ccrecipients", "");
+        formData.append("bccrecipients", "");
+        formData.append("messageSubject", subject);
+        formData.append("messageText", text);
+        formData.append("attachments", "");
+        formData.append("questions", "");
+        formData.append("priority", "normal");
+        formData.append("action", "send");
+        formData.append("attachmentFile", new Blob(), "");
+        fetch("https://rsu-intern.de/index.php?page=MessageCompose", {
+          method: "post",
+          body: formData,
+          credentials: "include"
+        });
+        reset();
+        window.alert("Die Nachricht wurde gesendet.");
+      }else{
+        window.alert("Nicht alle Felder sind ausgefüllt.");
+      }
+    }
+  </script>
+
+</body>
+
+</html>
